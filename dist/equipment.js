@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {interiorMaterial} from './interior-detail.js?v=7';
+import {interiorMaterial} from './interior-detail.js?v=8';
 // Supplemental metric equipment. Unspecified dimensions are proposed, not surveyed.
 export function equipment(parent,kind,x,z,yaw=0){
  const g=new THREE.Group();g.name=kind;g.position.set(x,0,z);g.rotation.y=yaw;g.userData={equipment:kind,dimensionsEvidence:'proposed'};parent.add(g);

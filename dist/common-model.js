@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import {interiorMaterial,furnished,door} from './interior-detail.js?v=7';
-import {equipment} from './equipment.js?v=7';
-import {parkedCars} from './detailed-cars.js?v=7';
+import {interiorMaterial,furnished,door} from './interior-detail.js?v=8';
+import {equipment} from './equipment.js?v=8';
+import {parkedCars} from './detailed-cars.js?v=8';
 // Shared spaces follow PDF pp5/9. Unlabelled dimensions remain interpretative.
 export function commonModel(floor,register){
  const g=new THREE.Group();g.name=floor===0?'Planta_baja_servicios':'SUM_comun';g.userData.floor=floor;g.position.y=floor===0?.08:15.38;

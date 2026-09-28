@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import {metricPlan,balconyFor,doorHands,sourcePoint} from './metric-plans.js?v=7';
-import {furnished,interiorMaterial,door} from './interior-detail.js?v=7';
-import {equipment} from './equipment.js?v=7';
+import {metricPlan,balconyFor,doorHands,sourcePoint,planWindows} from './metric-plans.js?v=8';
+import {furnished,interiorMaterial,door} from './interior-detail.js?v=8';
+import {equipment} from './equipment.js?v=8';
 
 export function modelFromPlan(unit,upper,p,registerMaterial){
  const data=metricPlan(unit.type),root=new THREE.Group(),origin=p.point(0,0),end=p.point(1,1),W=p.width,D=p.depth;
@@ -38,14 +38,12 @@ export function modelFromPlan(unit,upper,p,registerMaterial){
  const rect=(x,z,w,d)=>[[x,z],[x+w,z],[x+w,z+d],[x,z+d]];
  if(!upper){
   prism(data.outline,-.08,.08,floor);
-  const facadeWindows=unit.type==='B'?[[.20,2.70]]:unit.type==='C'?[[.18,2.00],[2.4,4.70]]:[[.20,2.12],[2.68,4.78],[6.08,8.70]];
-  const apertures=facadeWindows.map(([a,b])=>[a,0,b,0,.12,2.25]);
+  const apertures=planWindows(unit.type);
+  root.userData.planOpenings=apertures;
   for(const w of apertures)window(w.slice(0,2),w.slice(2,4),w[4],w[5]);
-  const sideOpenings=[];
-  if(unit.type!=='C'){for(const [lo,hi]of [[.7,2.25],[D-2.15,D-.85]]){sideOpenings.push([W,lo,W,hi,.85,2.15]);window([W,lo],[W,hi],.85,2.15);}}
-  if(unit.type!=='C'){sideOpenings.push([W-2.2,D,W-1.5,D,1.35,2.15]);window([W-2.2,D],[W-1.5,D],1.35,2.15);}
-  data.outline.forEach((a,i)=>{const b=data.outline[(i+1)%data.outline.length],front=Math.abs(a[1])<1e-6&&Math.abs(b[1])<1e-6,shared=Math.abs(a[0])<1e-6&&Math.abs(b[0])<1e-6,otherShared=unit.type==='C'&&Math.abs(a[0]-W)<1e-6&&Math.abs(b[0]-W)<1e-6;if(shared||otherShared){const shift=shared?.04:-.04;wall([a[0]+shift,a[1]],[b[0]+shift,b[1]],.08,[],'envelope');}else wall(a,b,.23,[...data.doors,...(front?apertures:[]),...sideOpenings],'envelope');});
-  for(const w of data.walls)wall(w.slice(0,2),w.slice(2),.12,data.doors);
+  data.outline.forEach((a,i)=>{const b=data.outline[(i+1)%data.outline.length];wall(a,b,.23,[...data.doors,...apertures],'envelope');});
+  const passage=unit.upper?[[...sourcePoint(unit.type,455,355),...sourcePoint(unit.type,495,355),0,2.18]]:[];
+  for(const w of data.walls)wall(w.slice(0,2),w.slice(2),.12,[...data.doors,...passage]);
   data.doors.forEach((d,i)=>door(root,d.slice(0,2),d.slice(2),0,doorHands[unit.type][i],65));
   for(const [name,[a,b]]of Object.entries(data.rooms))if(/bath|ensuite/i.test(name))prism(rect(Math.min(a[0],b[0]),Math.min(a[1],b[1]),Math.abs(a[0]-b[0]),Math.abs(a[1]-b[1])),.001,.008,tile);
   data.items.filter(i=>i.kind!=='kitchen'&&!(unit.type==='C'&&['sofa','table'].includes(i.kind))).forEach(item);
