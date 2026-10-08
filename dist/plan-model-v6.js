@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import {metricPlan,balconyFor,doorHands,sourcePoint,planWindows} from './metric-plans.js?v=8';
-import {furnished,interiorMaterial,door} from './interior-detail.js?v=8';
-import {equipment} from './equipment.js?v=8';
+import {metricPlan,balconyFor,doorHands,sourcePoint,planWindows} from './metric-plans.js?v=9';
+import {furnished,interiorMaterial,door} from './interior-detail.js?v=9';
+import {equipment} from './equipment.js?v=9';
 
 export function modelFromPlan(unit,upper,p,registerMaterial){
  const data=metricPlan(unit.type),root=new THREE.Group(),origin=p.point(0,0),end=p.point(1,1),W=p.width,D=p.depth;
@@ -50,7 +50,23 @@ export function modelFromPlan(unit,upper,p,registerMaterial){
   const mainBath=unit.type==='B'?'bath':unit.type==='C'?'bath':'ensuite',wc=data.items.find(i=>i.kind==='toilet'&&i.room===mainBath),bp={A:[969,742],B:[1024,665],C:[1250,224],D:[578,665],E:[578,665]}[unit.type],bidet=sourcePoint(unit.type,...bp);
   equip('bidet',...bidet,wc.yaw);
   if(unit.type==='A'||unit.upper){const cz=unit.type==='A'?6.13:5.85;item({kind:'kitchen',center:[2.42,cz],span:[2.65,.62],yaw:180,room:'cocina'});equip('fridge',.54,cz,180);equip('bar',1.78,4.7,0);equip('boiler',.40,cz+.3,180);if(unit.type==='A'){item({kind:'laundry',center:[2.15,7.64],span:[1.48,.66],yaw:180,room:'patio'});prism(rect(1.05,6.66,2.9,1.25),.002,.006,tile);}}
-  if(unit.type==='B'){item({kind:'kitchen',center:[.43,6.95],span:[.62,2.45],yaw:90,room:'cocina'});equip('fridge',.49,5.22,90);equip('armchair',1.23,3.40,-45);}
+  if(unit.type==='B'){item({kind:'kitchen',center:[.43,6.95],span:[.62,2.45],yaw:90,room:'cocina'});equip('fridge',.49,5.22,90);equip('armchair',unit.id==='105'?1.55:1.23,unit.id==='105'?4.12:3.40,unit.id==='105'?135:-45);}
+  if(unit.id==='105'){
+   // User-requested framed Batman portrait on the living/bedroom partition.
+   // Vector mesh artwork keeps the same appearance in the viewer and GLB export.
+   const ink=new THREE.MeshStandardMaterial({name:'Cuadro_Batman_negro',color:0x111419,roughness:.85,side:THREE.DoubleSide});
+   const paper=new THREE.MeshStandardMaterial({name:'Cuadro_Batman_marfil',color:0xeae8df,roughness:.9,side:THREE.DoubleSide});
+   registerMaterial(ink);registerMaterial(paper);
+   const cx=3.085-.085,cy=.77,cz=1.85;
+   const frame=box(cx,cy,cz,.045,.95,.68,ink,'artwork');frame.name='Cuadro_Batman_105';
+   const polygon=(points,mat,depth=0)=>{const s=new THREE.Shape(points.map(([u,v])=>new THREE.Vector2(u*.60,v*.86)));const m=new THREE.Mesh(new THREE.ShapeGeometry(s),mat);m.rotation.y=-Math.PI/2;m.position.set(cx-.027-depth,cy,cz);m.name='Batman_retrato_105';m.userData.role='artwork';root.add(m);};
+   // Stylized monochrome cowl, pointed ears, cape and chest silhouette.
+   polygon([[-.48,-.43],[-.42,-.20],[-.23,-.09],[-.17,.07],[-.18,.42],[-.07,.23],[.07,.23],[.18,.42],[.17,.07],[.23,-.09],[.42,-.20],[.48,-.43],[.27,-.33],[.18,-.43],[0,-.34],[-.18,-.43],[-.27,-.33]],paper);
+   polygon([[-.12,.12],[-.02,.08],[-.04,.04],[-.12,.07]],ink,.002);
+   polygon([[.12,.12],[.02,.08],[.04,.04],[.12,.07]],ink,.002);
+   polygon([[-.27,-.22],[-.12,-.25],[-.08,-.16],[0,-.22],[.08,-.16],[.12,-.25],[.27,-.22],[.18,-.33],[.09,-.29],[0,-.37],[-.09,-.29],[-.18,-.33]],ink,.002);
+   root.userData.customization105={armchair:{center:[1.55,4.12],yaw:135},artwork:'Batman portrait on living partition'};
+  }
   if(unit.type==='C'){item({kind:'kitchen',center:[2.15,7.68],span:[2.3,.62],yaw:180,room:'cocina'});equip('fridge',.50,7.58,180);equip('armchair',3.25,.91,45);equip('armchair',3.25,3.19,135);equip('bench',2.17,2.05,0);equip('bar',3.60,5.97,0);}
   equip('ac',2.45,.18,0);
   const bal=balconyFor(unit),a=unit.type==='C'?0:.10,b=a+bal.length,poly=bal.shallow?[[a,0],[b,0],[b,-bal.shallow],[a+bal.length*.68,-bal.shallow],[a+bal.length*.68,-bal.depth],[a,-bal.depth]]:rect(a,-bal.depth,bal.length,bal.depth);

@@ -3,12 +3,12 @@ import {OrbitControls} from './assets/vendor/examples/jsm/controls/OrbitControls
 import {GLTFLoader} from './assets/vendor/examples/jsm/loaders/GLTFLoader.js';
 import {DRACOLoader} from './assets/vendor/examples/jsm/loaders/DRACOLoader.js';
 import {RoomEnvironment} from './assets/vendor/examples/jsm/environments/RoomEnvironment.js';
-import {units,levels,placement} from './units.js?v=8';
-import {configureDetails} from './interior-detail.js?v=8';
-import {modelFromPlan} from './plan-model-v6.js?v=8';
-import {commonModel} from './common-model.js?v=8';
-import {batchModel} from './batch-model.js?v=8';
-import {configureCars} from './detailed-cars.js?v=8';
+import {units,levels,placement} from './units.js?v=9';
+import {configureDetails} from './interior-detail.js?v=9';
+import {modelFromPlan} from './plan-model-v6.js?v=9';
+import {commonModel} from './common-model.js?v=9';
+import {batchModel} from './batch-model.js?v=9';
+import {configureCars} from './detailed-cars.js?v=9';
 const $=id=>document.getElementById(id);
 const state={unit:'',mode:'ghost',floor:'all',cut:false,height:18.2,upper:false,ready:false,fullWalls:false};
 let renderer,controls,scene,camera,building;const unitGroups=[],commonGroups=[],modelMaterials=[],unitMaterials=[];

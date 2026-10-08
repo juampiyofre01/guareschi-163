@@ -1,6 +1,6 @@
 // Metric anchors: PDF pp10–14, clear room dimensions + wall half-thicknesses.
 // Interpolation between anchors is interpretative, not an executive survey.
-import {layouts} from './plan-layouts.js?v=8';
+import {layouts} from './plan-layouts.js?v=9';
 const lerp=(v,knots)=>{let i=1;while(i<knots.length-1&&v>knots[i][0])i++;const [a,x]=knots[i-1],[b,y]=knots[i];return x+(v-a)/(b-a)*(y-x);};
 const spec={
  A:{bounds:[600,75,1365,785],right:true,w:9.01,d:9.64,u:[[75,0],[450,4.865],[510,5.585],[565,6.285],[650,7.435],[785,9.01]],v:[[600,9.64],[720,8.08],[855,6.49],[865,6.365],[880,6.215],[950,5.245],[1105,3.275],[1365,0]]},
